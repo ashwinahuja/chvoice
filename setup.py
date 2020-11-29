@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-  name = 'speech-enhancement',
+  name = 'chvoice',
   packages = find_packages(),
   version = '0.0.1',
   license='MIT',

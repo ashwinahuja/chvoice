@@ -1,6 +1,6 @@
 ### [L46 Project] Chrome Extension for Speech Enhancement
 
-#### Install
+#### Install Python stuff in ./ml
 
 ```bash
 pip install git+https://github.com/indrasweb/chvoice
