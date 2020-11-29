@@ -1,6 +1,6 @@
 ### [L46 Project] Chrome Extension for Speech Enhancement
 
-#### Install Python stuff in ./ml
+#### Install
 
 ```bash
 pip install git+https://github.com/indrasweb/chvoice
@@ -8,9 +8,9 @@ pip install git+https://github.com/indrasweb/chvoice
 
 ```
 .
-├── ml
-│   ├── audio_processing.py   turn audio into spectrograms/images and visa-versa
-│   └── plotting.py           plot spectrograms of audio
-└── web
+├── chvoice                   ml experiments / python stuff
+│   ├── audio_processing.py   turn audio into spectrograms/images and visa-versa
+│   └── plotting.py           plot spectrograms of audio
+└── web                       javascript stuff for chrome extension
     └── README.md
 ```
