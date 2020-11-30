@@ -7,7 +7,7 @@ from chvoice.audio_processing import sig_to_chunks, sig_to_spec
 
 class StaticDataGenerator:
 
-    def __init__(self, clean_dir, noise_dir, sample_rate=22050, n_fft=512):
+    def __init__(self, clean_dir, noise_dir, batch_size=16, sample_rate=22050, n_fft=512, sec_per_sample=1.485):
         """ generate batches of spectrograms from pairs of .wav
             files in specified directories
         :param clean_dir: path to clean .wav files
@@ -22,15 +22,17 @@ class StaticDataGenerator:
         self.ix = 0  # count to last sample seen
         self.sr = sample_rate
         self.n_fft = n_fft
+        self.batch_size = batch_size
+        self.secs = sec_per_sample
 
-    def batch(self, batch_size=16, sec_per_sample=2):
+    def batch(self):
         """ returns batch (noisy, clean) spectrograms, where each sample
             is sec_per_sample seconds long.
         """
         samples_clean = []
         samples_noise = []
 
-        while len(samples_clean) < batch_size:
+        while len(samples_clean) < self.batch_size:
             # wrap back to start if we've seen all samples
             if self.ix >= self.num_samples: self.ix = 0
 
@@ -40,8 +42,8 @@ class StaticDataGenerator:
             sig_noise, _ = librosa.load(path_noise, sr=self.sr)
 
             try:
-                chunks_clean = sig_to_chunks(sig_clean, sec_per_sample, self.sr)
-                chunks_noise = sig_to_chunks(sig_noise, sec_per_sample, self.sr)
+                chunks_clean = sig_to_chunks(sig_clean, self.secs, self.sr)
+                chunks_noise = sig_to_chunks(sig_noise, self.secs, self.sr)
                 samples_clean.extend(chunks_clean)
                 samples_noise.extend(chunks_noise)
                 self.ix += 1
@@ -50,8 +52,8 @@ class StaticDataGenerator:
                 self.num_samples -= 1
 
         # truncate in case we added too many
-        samples_clean = samples_clean[:batch_size]
-        samples_noise = samples_noise[:batch_size]
+        samples_clean = samples_clean[:self.batch_size]
+        samples_noise = samples_noise[:self.batch_size]
 
         # convert to spectrograms
         samples_clean = [sig_to_spec(x, n_fft=self.n_fft)[0] for x in samples_clean]
