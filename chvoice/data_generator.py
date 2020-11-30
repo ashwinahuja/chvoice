@@ -25,7 +25,10 @@ class StaticDataGenerator:
         self.batch_size = batch_size
         self.secs = sec_per_sample
 
-    def batch(self):
+    def __len__(self):
+        return self.num_samples
+
+    def __getitem__(self):
         """ returns batch (noisy, clean) spectrograms, where each sample
             is sec_per_sample seconds long.
         """
