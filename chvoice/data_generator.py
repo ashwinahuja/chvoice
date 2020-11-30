@@ -7,7 +7,7 @@ from chvoice.audio_processing import sig_to_chunks, sig_to_spec
 
 class StaticDataGenerator:
 
-    def __init__(self, clean_dir, noise_dir, batch_size=16, sample_rate=22050, n_fft=512, sec_per_sample=1.485):
+    def __init__(self, clean_dir, noise_dir, batch_size=16, sample_rate=22050, n_fft=510, sec_per_sample=1.485):
         """ generate batches of spectrograms from pairs of .wav
             files in specified directories
         :param clean_dir: path to clean .wav files
