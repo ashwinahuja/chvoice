@@ -55,3 +55,21 @@ def spec_to_sig(spec_db, spec_phase, hop_length=128):
     sig = librosa.istft(stft, hop_length=hop_length)
 
     return sig
+
+
+def sig_to_chunks(sig, chunk_secs=2, sample_rate=22050):
+    """ split signal into chunk_secs (seconds) chunks.
+        example usage:
+            >>> sig, sr = librosa.load('sound.wav')
+            >>> chunks = chvoice.sig_to_chunks(sig, 2, sr)
+    """
+    n = int(chunk_secs * sample_rate)  # samples per chunk
+
+    if len(sig) < n: return []
+
+    chunks = [sig[i:i + n] for i in range(0, len(sig), n)]
+
+    if len(chunks[-1]) < n:
+        del chunks[-1]
+
+    return chunks
