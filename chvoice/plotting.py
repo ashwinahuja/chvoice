@@ -27,6 +27,7 @@ def plot_spec_db(spec_db, sample_rate=22050, hop_length=128):
     title += f',  fft_bins={spec_db.shape[0]}'
     title += f',  timesteps={spec_db.shape[1]}'
     title += f' (2D shape: {spec_db.shape})'
+    plt.title(title)
 
     plt.show()
     return
@@ -56,6 +57,7 @@ def plot_spec_phase(spec_phase, sample_rate=22050, hop_length=128):
     title += f',  fft_bins={spec_phase.shape[0]}'
     title += f',  timesteps={spec_phase.shape[1]}'
     title += f' (2D shape: {spec_phase.shape})'
+    plt.title(title)
 
     plt.show()
     return
