@@ -29,38 +29,37 @@ class StaticDataGenerator:
         """ returns batch (noisy, clean) spectrograms, where each sample
             is sec_per_sample seconds long.
         """
-        while True:
-            samples_clean = []
-            samples_noise = []
+        samples_clean = []
+        samples_noise = []
 
-            while len(samples_clean) < self.batch_size:
-                # wrap back to start if we've seen all samples
-                if self.ix >= self.num_samples: self.ix = 0
+        while len(samples_clean) < self.batch_size:
+            # wrap back to start if we've seen all samples
+            if self.ix >= self.num_samples: self.ix = 0
 
-                path_clean = join(self.clean_dir, self.fns[self.ix])
-                path_noise = join(self.noise_dir, self.fns[self.ix])
-                sig_clean, _ = librosa.load(path_clean, sr=self.sr)
-                sig_noise, _ = librosa.load(path_noise, sr=self.sr)
+            path_clean = join(self.clean_dir, self.fns[self.ix])
+            path_noise = join(self.noise_dir, self.fns[self.ix])
+            sig_clean, _ = librosa.load(path_clean, sr=self.sr)
+            sig_noise, _ = librosa.load(path_noise, sr=self.sr)
 
-                try:
-                    chunks_clean = sig_to_chunks(sig_clean, self.secs, self.sr)
-                    chunks_noise = sig_to_chunks(sig_noise, self.secs, self.sr)
-                    samples_clean.extend(chunks_clean)
-                    samples_noise.extend(chunks_noise)
-                    self.ix += 1
-                except AssertionError:
-                    del self.fns[self.ix]
-                    self.num_samples -= 1
+            try:
+                chunks_clean = sig_to_chunks(sig_clean, self.secs, self.sr)
+                chunks_noise = sig_to_chunks(sig_noise, self.secs, self.sr)
+                samples_clean.extend(chunks_clean)
+                samples_noise.extend(chunks_noise)
+                self.ix += 1
+            except AssertionError:
+                del self.fns[self.ix]
+                self.num_samples -= 1
 
-            # truncate in case we added too many
-            samples_clean = samples_clean[:self.batch_size]
-            samples_noise = samples_noise[:self.batch_size]
+        # truncate in case we added too many
+        samples_clean = samples_clean[:self.batch_size]
+        samples_noise = samples_noise[:self.batch_size]
 
-            # convert to spectrograms
-            samples_clean = [sig_to_spec(x, n_fft=self.n_fft)[0] for x in samples_clean]
-            samples_noise = [sig_to_spec(x, n_fft=self.n_fft)[0] for x in samples_noise]
+        # convert to spectrograms
+        samples_clean = [sig_to_spec(x, n_fft=self.n_fft)[0] for x in samples_clean]
+        samples_noise = [sig_to_spec(x, n_fft=self.n_fft)[0] for x in samples_noise]
 
-            X = np.stack(samples_noise)
-            Y = np.stack(samples_clean)
+        X = np.stack(samples_noise)
+        Y = np.stack(samples_clean)
 
-            yield X, Y
+        return X, Y
