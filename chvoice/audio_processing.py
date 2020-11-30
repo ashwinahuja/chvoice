@@ -2,6 +2,22 @@ import numpy as np
 import librosa
 
 
+def mix(sig1, sig2, sig2_power=0.2):
+    """ mix two wav signals together.
+        example usage:
+            >>> sig1, sr = librosa.load('sound.wav')
+            >>> sig2, sr = librosa.load('noise.wav')
+            >>> sig = chvoice.mix(sig1, sig2)
+    """
+    if len(sig2) < len(sig1):
+        n_repeats = np.ceil(len(sig1) / len(sig2))
+        sig2 = np.repeat(sig2, n_repeats)
+
+    sig = sig1 + sig2[:len(sig1)] * sig2_power
+
+    return sig
+
+
 def sig_to_spec(sig, n_fft=512, hop_length=128):
     """ get dB and phase spectrograms of signal
         example usage:
