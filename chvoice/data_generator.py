@@ -7,7 +7,7 @@ from chvoice.audio_processing import sig_to_chunks, sig_to_spec
 
 class StaticDataGenerator:
 
-    def __init__(self, clean_dir, noise_dir, sample_rate=22050):
+    def __init__(self, clean_dir, noise_dir, sample_rate=22050, n_fft=512):
         """ generate batches of spectrograms from pairs of .wav
             files in specified directories
         :param clean_dir: path to clean .wav files
@@ -21,6 +21,7 @@ class StaticDataGenerator:
         self.num_samples = len(self.fns)
         self.ix = 0  # count to last sample seen
         self.sr = sample_rate
+        self.n_fft = n_fft
 
     def batch(self, batch_size=16, sec_per_sample=2):
         """ returns batch (noisy, clean) spectrograms, where each sample
@@ -53,8 +54,8 @@ class StaticDataGenerator:
         samples_noise = samples_noise[:batch_size]
 
         # convert to spectrograms
-        samples_clean = [sig_to_spec(x)[0] for x in samples_clean]
-        samples_noise = [sig_to_spec(x)[0] for x in samples_noise]
+        samples_clean = [sig_to_spec(x, n_fft=self.n_fft)[0] for x in samples_clean]
+        samples_noise = [sig_to_spec(x, n_fft=self.n_fft)[0] for x in samples_noise]
 
         X = np.stack(samples_noise)
         Y = np.stack(samples_clean)
