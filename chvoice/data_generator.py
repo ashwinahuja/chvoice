@@ -2,11 +2,10 @@ from os import listdir
 from os.path import join
 import numpy as np
 import librosa
-import tensorflow as tf
 from chvoice.audio_processing import sig_to_chunks, sig_to_spec
 
 
-class StaticDataGenerator(tf.keras.utils.Sequence):
+class StaticDataGenerator:
 
     def __init__(self, clean_dir, noise_dir, batch_size=16, sample_rate=22050, n_fft=510, sec_per_sample=1.485):
         """ generate batches of spectrograms from pairs of .wav
@@ -26,10 +25,7 @@ class StaticDataGenerator(tf.keras.utils.Sequence):
         self.batch_size = batch_size
         self.secs = sec_per_sample
 
-    def __len__(self):
-        return self.num_samples
-
-    def __getitem__(self):
+    def batch(self):
         """ returns batch (noisy, clean) spectrograms, where each sample
             is sec_per_sample seconds long.
         """
@@ -66,4 +62,4 @@ class StaticDataGenerator(tf.keras.utils.Sequence):
         X = np.stack(samples_noise)
         Y = np.stack(samples_clean)
 
-        return X, Y
+        yield X, Y
