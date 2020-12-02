@@ -24,13 +24,10 @@ def sig_to_spec(sig, n_fft=512, hop_length=128):
             >>> sig, sr = librosa.load('sound.wav')
             >>> db, phase = chvoice.sig_to_spec(sig)
     """
-
     # represent input signal in time-frequency domain
     stft = librosa.stft(sig, n_fft=n_fft, hop_length=hop_length)
-
     # magnitude = amount of power/volume for each phase = frequency
     stft_magnitude, stft_phase = librosa.magphase(stft)
-
     # put magnitudes on log scale
     stft_magnitude_db = librosa.amplitude_to_db(stft_magnitude, np.max)
 
@@ -44,13 +41,10 @@ def spec_to_sig(spec_db, spec_phase, hop_length=128):
             >>> db, phase = chvoice.sig_to_spec(sig)
             >>> recovered_sig = chvoice.spec_to_sig(db, phase)
     """
-
     # go from log scale back to linear
     stft_magnitude = librosa.db_to_amplitude(spec_db)
-
     # recover full fourier transform of signal
     stft = stft_magnitude * spec_phase
-
     # inverse fourier transform to get signal
     sig = librosa.istft(stft, hop_length=hop_length)
 
@@ -64,11 +58,9 @@ def sig_to_chunks(sig, chunk_secs=2, sample_rate=22050):
             >>> chunks = chvoice.sig_to_chunks(sig, 2, sr)
     """
     n = int(chunk_secs * sample_rate)  # samples per chunk
-
     if len(sig) < n: return []
 
     chunks = [sig[i:i + n] for i in range(0, len(sig), n)]
-
     if len(chunks[-1]) < n:
         del chunks[-1]
 
