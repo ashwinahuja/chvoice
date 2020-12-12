@@ -12,6 +12,7 @@ setup(
   keywords = ['speech enhancement', 'model compression'],
   install_requires=[
       'librosa>=0.8.0'
+      'torchaudio==0.7.0'
   ],
   classifiers=[
       'Development Status :: Beta',
