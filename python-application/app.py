@@ -389,10 +389,8 @@ for i in range(FRAMES_PER_INFER):
 
 while(True): #to it a few times just to see
     data = np.fromstring(stream.read(CHUNK, exception_on_overflow = False),dtype=np.int16)
-    for i in range(FRAMES_PER_INFER - 1):
-        chunks[i] = chunks[i+1]
-    
-    chunks[FRAMES_PER_INFER - 1] = data
+    chunks = chunks[1:]
+    chunks = np.vstack([chunks, data])
     c2 = T.FloatTensor(chunks.flatten()).unsqueeze(0)
     db, phase = dsp.sig_to_db_phase(c2)
     chunks2 = normalize(phase).unsqueeze(1)
