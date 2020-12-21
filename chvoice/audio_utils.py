@@ -112,12 +112,16 @@ class Noiser:
                 './noises/click-mono': {'prob': 0.2, 'mul': .8},
                 './noises/wind-mono': {'prob': 0.2, 'mul': .4}
             }
+        else:
+            self.wav_noise_config = wav_noise_config
         if not additional_noise_config:
             self.additional_noise_config = {
                 'white_noise': {'prob': 0.25, 'mul': 1.},
                 'no_noise': {'prob': 0.2},
                 'reverb': {'prob': 0.2, 'density': 25}
             }
+        else:
+            self.additional_noise_config = additional_noise_config
 
         self.dirs = list(self.wav_noise_config.keys())
         self.probs = [self.wav_noise_config[k]['prob'] for k in self.dirs]
