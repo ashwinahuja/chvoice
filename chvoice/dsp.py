@@ -21,7 +21,7 @@ class DSP:
     def sig_to_db_phase(self, sig):
         """ get dB and phase spectrograms of signal
             example usage:
-                >>> sig, sr = torchaudio.load('sound.wav')
+                >>> sig, sr = ta.load('sound.wav')
                 >>> db, phase = chvoice.sig_to_db_phase(sig)
         """
         # represent input signal in time-frequency domain
@@ -36,7 +36,7 @@ class DSP:
     def db_phase_to_sig(self, db, phase):
         """ get wav signal from db and phase spectrograms.
             example usage:
-                >>> sig, sr = torchaudio.load('sound.wav')
+                >>> sig, sr = ta.load('sound.wav')
                 >>> db, phase = chvoice.sig_to_db_phase(sig)
                     ... do stuff to db ...
                 >>> recovered_sig = chvoice.spec_to_sig(db, phase)
