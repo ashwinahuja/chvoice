@@ -228,12 +228,12 @@ class Noiser:
         return sig
 
 
-denormalize = torchvision.transforms.Compose([ 
-    torchvision.transforms.Normalize(mean=0., std=1/18),
-    torchvision.transforms.Normalize(mean=32., std=1.)
-])
+# denormalize = torchvision.transforms.Compose([ 
+#     torchvision.transforms.Normalize(mean=0., std=1/18),
+#     torchvision.transforms.Normalize(mean=32., std=1.)
+# ])
 
-normalize = torchvision.transforms.Normalize(mean=-32., std=18)
+# normalize = torchvision.transforms.Normalize(mean=-32., std=18)
 
 def preprocess(X, dsp, noiser):
     clean = []
@@ -368,47 +368,71 @@ class UNet(nn.Module):
 
 
 model = UNet(1, 1)
-model.load_state_dict(T.load("./two_epochs_enhance.torch", map_location=T.device('cpu')))
+model.load_state_dict(T.load("./two_epochs_enhance.torch", map_location=T.device(DEVICE)))
 
-
-CHUNK = 8005 # number of data points to read at a time
-RATE = 16000 # time resolution of the recording device (Hz)
-FRAMES_PER_INFER = math.ceil(16010 / CHUNK)
+sr = 16000
 dsp = DSP(254)
-p=pyaudio.PyAudio() # start the PyAudio class
-stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True,
-              frames_per_buffer=CHUNK) #uses default input device
+sig = dsp.db_phase_to_sig(T.ones((128,128)), T.ones((128,128)))
+frame_len = len(sig)  # 16129
 
+p = pyaudio.PyAudio()
 
-stream_out = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
+stream_in = p.open(
+	format=pyaudio.paInt16,
+	channels=1,
+	rate=sr,
+    frames_per_buffer=frame_len,
+	input=True
+)
 
-chunks = np.zeros((FRAMES_PER_INFER, CHUNK), dtype=float)
-for i in range(FRAMES_PER_INFER):
-    data = np.fromstring(stream.read(CHUNK, exception_on_overflow = False),dtype=np.int16)
-    chunks[i] = data
+stream_out = p.open(
+	format=pyaudio.paInt16, 
+	channels=1, 
+	rate=sr, 
+	output=True
+)
 
-while(True): #to it a few times just to see
-    data = np.fromstring(stream.read(CHUNK, exception_on_overflow = False),dtype=np.int16)
-    chunks = chunks[1:]
-    chunks = np.vstack([chunks, data])
-    c2 = T.FloatTensor(chunks.flatten()).unsqueeze(0)
-    db, phase = dsp.sig_to_db_phase(c2)
-    chunks2 = normalize(phase).unsqueeze(1)
+mean = 0
+std = 0
+
+# buf = np.empty((FRAMES_PER_INFER, CHUNK), dtype=float)
+
+# for i in range(FRAMES_PER_INFER):
+#     data = np.fromstring(stream_in.read(CHUNK, exception_on_overflow = False),dtype=np.int16)
+#     chunks[i] = data
+
+while(True):
+    data = np.fromstring(stream_in.read(frame_len, exception_on_overflow=False), dtype=np.int16)
+    # chunks = chunks[1:]
+    # chunks = np.vstack([chunks, data])
+    # c2 = T.FloatTensor(chunks.flatten()).unsqueeze(0)
+    sig = T.from_numpy(data).float().unsqueeze(0).to(DEVICE)
+
+    # print(c2)
+    db, phase = dsp.sig_to_db_phase(sig)
+    mean = T.mean(db)
+    std = T.std(db)
+    db = ((db - mean)/std).unsqueeze(1)
                  
     with T.no_grad():
-        proc = denormalize(model(chunks2))
-    
-    db_out = T.cat([c for c in proc.squeeze(1)], dim=1)
-    phase_clipped = phase[0,:,:db_out.size(1)]
-    sig = dsp.db_phase_to_sig(db_out, phase_clipped).numpy()[-1 * CHUNK:]
-    data = data.astype(np.int16).tostring()
-    stream_out.write(data)
+        proc = ((model(db) * std) + mean).squeeze(1)
+
+    # print(proc.shape, phase.shape)
+    # db_out = T.cat([c for c in proc.squeeze(1)], dim=1)
+    # phase_clipped = phase[0,:,:db_out.size(1)]
+
+    sig_out = dsp.db_phase_to_sig(proc, phase[0,:,:]).numpy()
+    # print(sig_out)
+    # print(len(sig))
+    bytes_out = sig_out.astype(np.int16).tostring()
+    # print(data)
+    stream_out.write(bytes_out)
     
 
 # close the stream gracefully
-stream.stop_stream()
+stream_in.stop_stream()
 stream_out.stop_stream()
-stream.close()
+stream_in.close()
 stream_out.close()
 p.terminate()
 
