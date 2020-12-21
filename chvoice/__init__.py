@@ -1,2 +1,2 @@
-from dsp import *
-from audio_utils import *
+from chvoice.dsp import *
+from chvoice.audio_utils import *
