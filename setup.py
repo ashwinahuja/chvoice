@@ -8,7 +8,7 @@ setup(
   description = 'L46 Assignment, Speech Enhancement',
   author = 'Harry Songhurst and Ashwin Ahuja',
   author_email = 'harrysonghurst@gmail.com',
-  url = 'https://github.com/indrasweb/speech-enhancement',
+  url = 'https://github.com/indrasweb/chvoice',
   keywords = ['speech enhancement', 'model compression'],
   install_requires=[
       'librosa>=0.8.0'
