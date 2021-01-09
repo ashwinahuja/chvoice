@@ -25,6 +25,9 @@
 /* Begin PBXFileReference section */
 		CF73545A2588E40300A826C5 /* AttemptAtDoingLiveMicStuff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AttemptAtDoingLiveMicStuff; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF73545D2588E40300A826C5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		CF7354672588E41400A826C5 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		CF7354682588E41400A826C5 /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
+		CF7354692588E41500A826C5 /* libswiftAVFoundation.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftAVFoundation.tbd; path = usr/lib/swift/libswiftAVFoundation.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +46,7 @@
 			children = (
 				CF73545C2588E40300A826C5 /* AttemptAtDoingLiveMicStuff */,
 				CF73545B2588E40300A826C5 /* Products */,
+				CF7354652588E41400A826C5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,6 +64,16 @@
 				CF73545D2588E40300A826C5 /* main.swift */,
 			);
 			path = AttemptAtDoingLiveMicStuff;
+			sourceTree = "<group>";
+		};
+		CF7354652588E41400A826C5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CF7354672588E41400A826C5 /* AVFoundation.framework */,
+				CF7354682588E41400A826C5 /* AVKit.framework */,
+				CF7354692588E41500A826C5 /* libswiftAVFoundation.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
