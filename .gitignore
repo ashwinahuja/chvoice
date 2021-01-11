@@ -1,5 +1,6 @@
 .idea
 .data
+*hdf5*
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
